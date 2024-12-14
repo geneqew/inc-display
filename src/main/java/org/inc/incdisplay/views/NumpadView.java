@@ -1,0 +1,112 @@
+package org.inc.incdisplay.views;
+
+import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.Notification.Position;
+import com.vaadin.flow.component.notification.NotificationVariant;
+import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
+import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.router.Route;
+import org.inc.incdisplay.model.Broadcaster;
+
+import static com.vaadin.flow.component.button.ButtonVariant.LUMO_ERROR;
+import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
+
+@Route("numpad")
+public class NumpadView extends VerticalLayout {
+
+    private final Span numberDisplay;
+
+    public NumpadView() {
+        setSizeFull();
+
+        numberDisplay = new Span("");
+        numberDisplay.setWidthFull();
+        numberDisplay.setHeight("80px");
+        numberDisplay.getStyle()
+                .set("font-weight", "bold")
+                .set("text-align", "center")
+                .set("font-size", "clamp(16px, 17vw, 80px)");
+
+
+        HorizontalLayout displayPanel = new HorizontalLayout();
+        displayPanel.setWidthFull();
+        displayPanel.addAndExpand(numberDisplay);
+        add(displayPanel);
+
+        HorizontalLayout sendLayout = new HorizontalLayout();
+        sendLayout.setWidthFull();
+        sendLayout.addAndExpand(createShowButton());
+        add(sendLayout);
+
+        HorizontalLayout horizon1 = new HorizontalLayout();
+        horizon1.setWidthFull();
+        horizon1.addAndExpand(createNumpadButton("7"), createNumpadButton("8"), createNumpadButton("9"));
+        add(horizon1);
+
+        HorizontalLayout horizon2 = new HorizontalLayout();
+        horizon2.setWidthFull();
+        horizon2.addAndExpand(createNumpadButton("4"), createNumpadButton("5"), createNumpadButton("6"));
+        add(horizon2);
+
+        HorizontalLayout horizon3 = new HorizontalLayout();
+        horizon3.setWidthFull();
+        horizon3.addAndExpand(createNumpadButton("1"), createNumpadButton("2"), createNumpadButton("3"));
+        add(horizon3);
+
+        HorizontalLayout horizon4 = new HorizontalLayout();
+        horizon4.setWidthFull();
+        horizon4.addAndExpand(createNumpadButton("0"));
+
+        Button clearButton = createClearButton();
+        horizon4.addAndExpand(clearButton);
+        horizon4.setFlexGrow(2, clearButton);
+
+
+        add(horizon4);
+    }
+
+    protected Button createNumpadButton(String label) {
+        Button button = new Button(label);
+        button.setHeight("60px");
+        button.addClickListener(e -> handleButtonClick(label));
+        return button;
+    }
+
+    protected Button createShowButton() {
+        Button sendButton = new Button("SHOW");
+        sendButton.setHeight("60px");
+        sendButton.addThemeVariants(LUMO_PRIMARY);
+        sendButton.addClickListener(e -> handleShowButton());
+
+        return sendButton;
+    }
+
+    protected Button createClearButton() {
+        Button clearButton = new Button("CLEAR");
+        clearButton.setHeight("60px");
+        clearButton.addThemeVariants(LUMO_PRIMARY, LUMO_ERROR);
+        clearButton.addClickListener(e -> handleClearButton());
+        return clearButton;
+    }
+
+    private void handleClearButton() {
+        numberDisplay.setText("");
+    }
+
+    private void handleShowButton() {
+        Broadcaster.broadcast(numberDisplay.getText());
+
+        String text = String.format("%s sent to display(s)", numberDisplay.getText());
+        Notification notification = Notification.show(text);
+        notification.setDuration(2000);
+        notification.setPosition(Position.BOTTOM_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    }
+
+    private void handleButtonClick(String label) {
+        String newContent = numberDisplay.getText() + label;
+        numberDisplay.setText(newContent);
+    }
+}

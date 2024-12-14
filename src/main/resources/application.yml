@@ -1,0 +1,37 @@
+vaadin:
+  launch-browser: true
+  push:
+    enabled: true
+
+spring:
+  application:
+    name: inc-display
+
+broadcaster-config:
+  default-display: ---
+  use-key-when-not-present: true
+  short-codes:
+    0: DOXOLOGY
+    888: Pasalamat
+    999: INC
+client-config:
+  timeout: 10000
+  client-map:
+    left:
+      ip: 192.168.2.38
+      port: 22
+      host: piz2wf.local
+      username: pi
+      password: pi
+    right:
+      ip: 192.168.2.39
+      port: 22
+      host: piz2wf.local
+      username: pi
+      password: pi
+    center:
+      ip: 192.168.2.38
+      port: 22
+      host: piz2wf.local
+      username: pi
+      password: pi
