@@ -1,3 +1,4 @@
+
 vaadin:
   launch-browser: true
   push:
@@ -16,20 +17,23 @@ broadcaster-config:
     999: INC
 client-config:
   timeout: 10000
-  client-map:
-    left:
+  display-clients:
+    - name: Left
+      icon: CHEVRON_CIRCLE_LEFT
       ip: 192.168.2.38
       port: 22
       host: piz2wf.local
       username: pi
       password: pi
-    right:
-      ip: 192.168.2.39
+    - name: Right
+      icon: CHEVRON_CIRCLE_RIGHT
+      ip: 192.168.2.38
       port: 22
       host: piz2wf.local
       username: pi
       password: pi
-    center:
+    - name: Center
+      icon: CHEVRON_CIRCLE_UP
       ip: 192.168.2.38
       port: 22
       host: piz2wf.local

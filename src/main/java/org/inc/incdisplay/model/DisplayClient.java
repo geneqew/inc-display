@@ -2,6 +2,8 @@ package org.inc.incdisplay.model;
 
 import java.io.ByteArrayOutputStream;
 
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
@@ -21,6 +23,8 @@ import static org.inc.incdisplay.model.Command.TURN_ON_DISPLAY;
 @Slf4j
 public class DisplayClient {
 
+    private String name;
+    private VaadinIcon icon;
     private String ip;
     private String host;
     @Builder.Default
@@ -49,12 +53,11 @@ public class DisplayClient {
             // Connect to the remote server
             ConnectFuture connectFuture = sshClient.connect(displayClient.getUsername(), displayClient.getIp(), displayClient.getPort());
             connectFuture.await();
-            try (ClientSession session = connectFuture.getSession()) {
+            try (ClientSession session = connectFuture.getSession(); ByteArrayOutputStream outputStream = new ByteArrayOutputStream()) {
                 session.addPasswordIdentity(displayClient.getPassword());
                 session.auth().verify();
 
                 // Execute the command
-                ByteArrayOutputStream outputStream = new ByteArrayOutputStream();
                 session.executeRemoteCommand(command);
                 result = outputStream.toString();
             }

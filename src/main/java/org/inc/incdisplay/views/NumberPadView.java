@@ -1,25 +1,33 @@
 package org.inc.incdisplay.views;
 
 import com.vaadin.flow.component.button.Button;
+import com.vaadin.flow.component.button.ButtonVariant;
+import com.vaadin.flow.component.html.Paragraph;
 import com.vaadin.flow.component.html.Span;
+import com.vaadin.flow.component.icon.Icon;
+import com.vaadin.flow.component.icon.VaadinIcon;
 import com.vaadin.flow.component.notification.Notification;
 import com.vaadin.flow.component.notification.Notification.Position;
 import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
+import com.vaadin.flow.component.popover.Popover;
+import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
 import org.inc.incdisplay.model.Broadcaster;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_ERROR;
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_PRIMARY;
 
-@Route("numpad")
-public class NumpadView extends VerticalLayout {
+@PageTitle("Number Display")
+@Route(value = "number-pad", layout = MainLayout.class)
+public class NumberPadView extends VerticalLayout {
 
     private final Span numberDisplay;
 
-    public NumpadView() {
+    public NumberPadView() {
         setSizeFull();
+        setPadding(true);
 
         numberDisplay = new Span("");
         numberDisplay.setWidthFull();
@@ -62,9 +70,31 @@ public class NumpadView extends VerticalLayout {
         Button clearButton = createClearButton();
         horizon4.addAndExpand(clearButton);
         horizon4.setFlexGrow(2, clearButton);
-
-
         add(horizon4);
+
+
+        HorizontalLayout horizon5 = new HorizontalLayout();
+        horizon5.setWidthFull();
+        horizon5.addAndExpand(numpadInfoButton());
+        add(horizon5);
+    }
+
+    private Button numpadInfoButton() {
+        Button infoButton = new Button(new Icon(VaadinIcon.INFO));
+        infoButton.addThemeVariants(ButtonVariant.LUMO_ICON);
+
+        Popover popover = new Popover();
+        popover.setTarget(infoButton);
+        popover.setModal(true, true);
+
+        Paragraph content = new Paragraph("""
+            Tap the number you wish to display, then tap SHOW to display it on all available monitors.\n
+            Tap CLEAR to make a correction.\n
+            Tapping SHOW with a blank content sets the display to empty\n""");
+        content.getStyle().set("white-space", "pre-wrap");
+        popover.add(content);
+
+        return infoButton;
     }
 
     protected Button createNumpadButton(String label) {

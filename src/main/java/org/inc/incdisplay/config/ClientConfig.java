@@ -1,6 +1,7 @@
 package org.inc.incdisplay.config;
 
-import java.util.Map;
+import java.util.Collection;
+import java.util.List;
 
 import lombok.Data;
 import org.inc.incdisplay.model.DisplayClient;
@@ -13,6 +14,10 @@ import org.springframework.context.annotation.Configuration;
 public class ClientConfig {
 
     private int timeout;
-    private Map<String, DisplayClient> clients;
+    private List<DisplayClient> displayClients;
+
+    public Collection<String> getClientNames() {
+        return getDisplayClients().stream().map(DisplayClient::getName).toList();
+    }
 
 }
