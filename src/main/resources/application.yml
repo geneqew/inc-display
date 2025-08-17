@@ -39,3 +39,5 @@ client-config:
       host: piz2wf.local
       username: pi
       password: pi
+app-settings:
+  default-theme: dark

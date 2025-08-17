@@ -1,5 +1,7 @@
 package org.inc.incdisplay.views;
 
+import java.util.Optional;
+
 import com.vaadin.flow.component.button.Button;
 import com.vaadin.flow.component.button.ButtonVariant;
 import com.vaadin.flow.component.html.Paragraph;
@@ -14,6 +16,7 @@ import com.vaadin.flow.component.orderedlayout.VerticalLayout;
 import com.vaadin.flow.component.popover.Popover;
 import com.vaadin.flow.router.PageTitle;
 import com.vaadin.flow.router.Route;
+import org.apache.commons.lang3.StringUtils;
 import org.inc.incdisplay.model.Broadcaster;
 
 import static com.vaadin.flow.component.button.ButtonVariant.LUMO_ERROR;
@@ -128,8 +131,12 @@ public class NumberPadView extends VerticalLayout {
     private void handleShowButton() {
         Broadcaster.broadcast(numberDisplay.getText());
 
-        String text = String.format("%s sent to display(s)", numberDisplay.getText());
-        Notification notification = Notification.show(text);
+        String content = Optional.ofNullable(numberDisplay.getText())
+                .filter(StringUtils::isNotEmpty)
+                .map(s -> String.format("%s sent to display(s)", s))
+                .orElse("Screen Cleared");
+
+        Notification notification = Notification.show(content);
         notification.setDuration(2000);
         notification.setPosition(Position.BOTTOM_CENTER);
         notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
