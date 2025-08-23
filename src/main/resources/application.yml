@@ -20,23 +20,23 @@ client-config:
   display-clients:
     - name: Left
       icon: CHEVRON_CIRCLE_LEFT
-      ip: 192.168.2.38
+      ip: 192.168.0.40
       port: 22
-      host: piz2wf.local
+      host: pi02l.local
       username: pi
       password: pi
     - name: Right
       icon: CHEVRON_CIRCLE_RIGHT
-      ip: 192.168.2.38
+      ip: 192.168.0.41
       port: 22
-      host: piz2wf.local
+      host: pi02r.local
       username: pi
       password: pi
     - name: Center
       icon: CHEVRON_CIRCLE_UP
-      ip: 192.168.2.38
+      ip: 192.168.0.39
       port: 22
-      host: piz2wf.local
+      host: pi02c.local
       username: pi
       password: pi
 app-settings:

@@ -1,5 +1,9 @@
 package org.inc.incdisplay.views;
 
+import java.util.Set;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+
 import com.vaadin.flow.component.Component;
 import com.vaadin.flow.component.UI;
 import com.vaadin.flow.component.button.Button;
@@ -10,6 +14,8 @@ import com.vaadin.flow.component.html.Div;
 import com.vaadin.flow.component.html.H4;
 import com.vaadin.flow.component.html.Span;
 import com.vaadin.flow.component.icon.VaadinIcon;
+import com.vaadin.flow.component.notification.Notification;
+import com.vaadin.flow.component.notification.NotificationVariant;
 import com.vaadin.flow.component.orderedlayout.FlexComponent;
 import com.vaadin.flow.component.orderedlayout.HorizontalLayout;
 import com.vaadin.flow.component.orderedlayout.VerticalLayout;
@@ -20,7 +26,9 @@ import com.vaadin.flow.router.Route;
 import lombok.extern.slf4j.Slf4j;
 import org.inc.incdisplay.config.ClientConfig;
 import org.inc.incdisplay.model.AppTheme;
+import org.inc.incdisplay.model.Command;
 import org.inc.incdisplay.model.DisplayClient;
+import org.springframework.util.CollectionUtils;
 
 @PageTitle("Settings")
 @Route(value = "settings", layout = MainLayout.class)
@@ -28,6 +36,8 @@ import org.inc.incdisplay.model.DisplayClient;
 public class SettingsView extends VerticalLayout {
 
     ClientConfig clientConfig;
+
+    private ExecutorService executorService = Executors.newSingleThreadExecutor();
 
     public SettingsView(ClientConfig clientConfig) {
         this.clientConfig = clientConfig;
@@ -110,15 +120,46 @@ public class SettingsView extends VerticalLayout {
         onButton.setIcon(VaadinIcon.CHECK.create());
         onButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY);
         onButton.addClickListener(event -> {
+            Set<DisplayClient> displayClients = displayListBox.getValue();
+            if (!CollectionUtils.isEmpty(displayClients)) {
+                turnOnDisplays(displayClients);
+                String content = String.format("Setting ON Sequence for [%s]", displayClients);
+                showScreenToggleNotificationMessage(content);
+            }
         });
 
         Button offButton = new Button("OFF");
         offButton.setIcon(VaadinIcon.POWER_OFF.create());
         offButton.addThemeVariants(ButtonVariant.LUMO_PRIMARY, ButtonVariant.LUMO_WARNING);
+        offButton.addClickListener(event -> {
+            Set<DisplayClient> displayClients = displayListBox.getValue();
+            if (!CollectionUtils.isEmpty(displayClients)) {
+                turnOffDisplays(displayClients);
+                String content = String.format("Setting OFF Sequence for [%s]", displayClients);
+                showScreenToggleNotificationMessage(content);
+            }
+        });
 
         horizontalLayout.addAndExpand(onButton, offButton);
         monitorSettingsLayout.add(horizontalLayout);
 
         return monitorSettingsLayout;
     }
+
+    protected void showScreenToggleNotificationMessage(String content) {
+
+        Notification notification = Notification.show(content);
+        notification.setDuration(2000);
+        notification.setPosition(Notification.Position.BOTTOM_CENTER);
+        notification.addThemeVariants(NotificationVariant.LUMO_SUCCESS);
+    }
+
+    protected void turnOffDisplays(Set<DisplayClient> clients) {
+        executorService.execute(() -> clients.forEach(DisplayClient::turnOffDisplay));
+    }
+
+    protected void turnOnDisplays(Set<DisplayClient> clients) {
+        executorService.execute(() -> clients.forEach(DisplayClient::turnOnDisplay));
+    }
+
 }
